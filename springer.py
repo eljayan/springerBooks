@@ -9,10 +9,6 @@ from tkFileDialog import askdirectory
 from pdfminer.high_level import extract_text
 
 headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0'}
-PROXIES = {
-    "http": "http://r00715649:Huawei%3F3@proxy.huawei.com:8080",
-    "https": "http://r00715649:Huawei%3F3@proxy.huawei.com:8080"
-}
 
 def main():
 
@@ -34,6 +30,11 @@ def main():
 
 
 def readSrpingerFile(filepath):
+    """
+    this function opens the springer pdf file wich contains more than 400 urls to free ebooks
+    param: filepath: path to the pdf file from springer
+    returns: a list of urls to ebooks.
+    """
     pat = re.compile(r"http://link.springer.com/openurl.*", re.IGNORECASE)
     t= extract_text(filepath)
     links = pat.findall(t)
@@ -41,7 +42,11 @@ def readSrpingerFile(filepath):
 
 
 def donwloadLink(url, saveDir):
-
+    """
+    params:url: the url to an ebook front page
+    params:saveDir: path to folder, where to save the pdf
+    returns:True if the operation succeded.
+    """
     page = requests.get(url, headers=headers, verify=False)
     soup = bs4.BeautifulSoup(page.text, "html.parser")
 
@@ -63,6 +68,11 @@ def donwloadLink(url, saveDir):
 
 
 def downloadFile(fileUrl, savepath):
+    """
+    params:url: the url to an ebook pdf file
+    params:savepath: save as name of the downloaded pdf
+    returns:True if the operation succeded.
+    """
     r = requests.get(fileUrl, headers=headers, proxies=PROXIES, verify=False, stream=True)
 
     if r.status_code == 200:
@@ -78,8 +88,6 @@ def select_folder():
     fold= askdirectory(title="Seleccione carpeta de destino:")
     return fold
 
+
 if __name__ == '__main__':
-    #donwloadLink("https://link.springer.com/book/10.1007%2F978-3-642-55309-7", "Books/")
-    #print downloadFile("https://link.springer.com/content/pdf/10.1007%2F978-3-642-55309-7.pdf","Books/test.pdf" )
-    #print readSrpingerFile("D:/myScripts/SpringerLink/Springer Ebooks.pdf")
     main()
